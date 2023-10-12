@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React from 'react';
 import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
@@ -7,6 +8,8 @@ import icon from '../../Assets/pngtree-stock-exchange-finance-logo-template-illu
 
 const Header = () => {
   // const [value, setValue] = useState('');
+
+  
 
   return (
     <div>
