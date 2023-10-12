@@ -10,18 +10,22 @@ import io from 'socket.io-client';
 const Stock = () => {
   const [stock, setStock] = useState([]);
   const [stock_id, setStock_id] = useState('');
-
-  
-  const socket = io('http://localhost:5000/api/socket', {
-    withCredentials: true,
-    auth: {
-      stock_id: stock_id, // tata id
-    },
+  const [price, setPrice] = useState({
+    stock_name: '',
+    price: '0',
   });
-  console.log(socket);
+  console.log(stock_id);
+  console.log(stock);
 
   const getId = (e) => {
+    console.log(e);
     setStock_id(e.target.value);
+    const filteredData = stock.filter((item) => item._id === e.target.value)[0];
+    setPrice({
+      ...price,
+      stock_name: filteredData.stock_name,
+      price: filteredData.price,
+    });
   };
 
   const fetchStock = async () => {
@@ -43,8 +47,24 @@ const Stock = () => {
 
   useEffect(() => {
     fetchStock();
-    socket.off('stock_price_update').on('stock_price_update', async (data) => {
-      console.log('final output new message', data);
+    const socket = io('http://localhost:5000/api/socket', {
+      withCredentials: true,
+      auth: {
+        stock_id: stock_id, // tata id
+      },
+    });
+    socket.off('stock_price_update').on('stock_price_update', (data) => {
+      // console.log('final output new message', data.price);
+      const stockData = {
+        // stock_name: price.stock_name,
+        price: data.price,
+      };
+      console.log(stockData);
+      // const obj = {
+      //   ...price,
+      //   ...stockData,
+      // };
+      setPrice(stockData);
     });
   }, []);
   return (
@@ -63,7 +83,7 @@ const Stock = () => {
               </select>
             </div>
             <div className='heading'>
-              <h1>Company :{''} Apple</h1>{' '}
+              <h1>Company :{price.stock_name}</h1>{' '}
             </div>
             {/* <div className='logo'>
               <h3>
@@ -76,7 +96,7 @@ const Stock = () => {
               </h3>
             </div> */}
             <div className='price'>
-              <h3>Stock value: {''}$677</h3>
+              <h3>Stock value: {price?.price ?? 0}</h3>
             </div>
           </Col>
         </Row>
